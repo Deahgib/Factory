@@ -16,32 +16,37 @@ AItem::AItem()
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+  beltInfluence = false;
+  direction = FVector();
+  speed = 0;
+  others = TArray<AActor*>();
+  otherComponents = TArray<UPrimitiveComponent*>();
 }
 
 // Called every frame
 void AItem::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-  bool beltInfluence = false;
-  FVector direction(0,0,0);
-  float speed = 0;
-  TArray<AActor*> others;
+  beltInfluence = false;
+  direction = FVector::ZeroVector;
+  speed = 0;
+  others.Reset();
   meshShape->GetOverlappingActors(others);
   for (AActor* other : others) {
     ABelt* belt = Cast<ABelt>(other);
     if (belt) {
-      TArray<UPrimitiveComponent*> otherComponents;
+      otherComponents.Reset();
       meshShape->GetOverlappingComponents(otherComponents);
       for (UPrimitiveComponent* otherComponent : otherComponents) {
         for (UShapeComponent* conveyer : belt->conveyers) {
           if (otherComponent == conveyer) {
-            beltInfluence = true;
-            if (speed < belt->beltSpeed) {
-              speed = belt->beltSpeed;
+            if (meshShape->GetComponentVelocity().Size() < belt->beltSpeed) {
+              beltInfluence = true;
+              speed = belt->beltSpeed + belt->beltSpeed*0.1f;
+              direction += conveyer->GetForwardVector();
+              break;
             }
-            direction += conveyer->GetForwardVector();
-            break;
           }
         }
       }

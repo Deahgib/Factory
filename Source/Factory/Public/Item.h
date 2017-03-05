@@ -10,6 +10,13 @@ class FACTORY_API AItem : public AActor
 {
 	GENERATED_BODY()
 	
+private:
+  bool beltInfluence;
+  FVector direction;
+  float speed;
+  TArray<AActor*> others;
+  TArray<UPrimitiveComponent*> otherComponents;
+
 public:	
 
   UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
