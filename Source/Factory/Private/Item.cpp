@@ -41,7 +41,7 @@ void AItem::Tick( float DeltaTime )
       for (UPrimitiveComponent* otherComponent : otherComponents) {
         for (UShapeComponent* conveyer : belt->conveyers) {
           if (otherComponent == conveyer) {
-            if (meshShape->GetComponentVelocity().Size() < belt->beltSpeed) {
+            if (meshShape->GetComponentVelocity().Size() < belt->beltSpeed || meshShape->GetComponentVelocity() != conveyer->GetForwardVector()) {
               beltInfluence = true;
               speed = belt->beltSpeed + belt->beltSpeed*0.1f;
               direction += conveyer->GetForwardVector();
